@@ -1,62 +1,60 @@
-import { Background, Column, Row } from "@once-ui-system/core";
+"use client";
+
+import React from "react";
+import { Row, Particle, Background } from "@once-ui-system/core";
 
 export const Effects: React.FC<React.ComponentProps<typeof Row>> = ({ ...flex }) => {
   return (
-    <Column fillWidth {...flex}>
-      <Row fillWidth style={{height: "100vh"}}>
+    <Row
+      fill
+      position="absolute"
+      top="0"
+      left="0"
+      horizontal="center"
+      vertical="center"
+      pointerEvents="none"
+      {...flex}
+    >
+      {/* concentric rings */}
+      <Row position="absolute" minWidth={74} minHeight={28} radius="full" border="brand-alpha-weak" />
+      <Row position="absolute" minWidth={58} minHeight={28} radius="full" border="brand-alpha-weak" />
+      <Row position="absolute" minWidth={45} minHeight={28} radius="full" border="brand-alpha-medium" />
+      <Row position="absolute" minWidth={35} minHeight={28} radius="full" border="brand-alpha-medium" />
+
+      {/* inner halo + particles */}
+      <Row position="absolute" minWidth={28} minHeight={28} radius="full" border="brand-alpha-strong" overflow="hidden">
         <Background
           fill
-          data-solid="color"
+          position="absolute"
           gradient={{
             display: true,
             x: 50,
-            y: 100,
+            y: 50,
             width: 100,
-            height: 50,
-            colorStart: "brand-solid-strong",
-            colorEnd: "static-transparent",
-          }}
-        />
-        <Background
-          fill
-          position="absolute"
-          bottom="0"
-          left="0"
-          gradient={{
-            display: true,
-            x: 50,
-            y: 100,
-            width: 100,
-            height: 30,
-            colorStart: "brand-on-background-strong",
-            colorEnd: "static-transparent",
-          }}
-        />
-        <Row
-          fill
-          position="absolute"
-          bottom="0"
-          left="0"
-          style={{background: "linear-gradient(to top, var(--brand-on-background-strong) 0%, var(--static-transparent) 25%)"}}
-        />
-        <Background
-          fill
-          style={{mixBlendMode: "difference"}}
-          position="absolute"
-          top="0"
-          left="0"
-          dots={{
-            display: true,
-            size: "160",
-            color: "neutral-on-background-strong",
+            height: 60,
             opacity: 100,
+            colorStart: "brand-alpha-weak",
+            colorEnd: "static-transparent",
           }}
-        />
+          mask={{ x: 50, y: 50, radius: 25 }}
+        >
+          <Particle
+            style={{ transform: "scale(1.1)" }}
+            opacity={70}
+            position="absolute"
+            top="0"
+            left="0"
+            fill
+            interactive
+            speed={4}
+            density={100}
+            size="1"
+            interactionRadius={50}
+          />
+        </Background>
       </Row>
-      <Row
-        fillWidth
-        style={{height: "100vh", background: "linear-gradient(to bottom, var(--brand-on-background-strong) 50%, var(--static-transparent) 90%)"}}
-      />
-    </Column>
+    </Row>
   );
 };
+
+export default Effects;

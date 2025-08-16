@@ -40,17 +40,16 @@ const fonts = {
 
 // default customization applied to the HTML in the main layout.tsx
 const style = {
-  theme: "light", // dark | light - not needed when using ThemeProvider
-  neutral: "gray", // sand | gray | slate
-  brand: "blue", // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
-  accent: "red", // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
-  solid: "contrast", // color | contrast | inverse
-  solidStyle: "flat", // flat | plastic
-  border: "playful", // rounded | playful | conservative
-  surface: "filled", // filled | translucent
-  transition: "all", // all | micro | macro
-  scaling: "100", // 90 | 95 | 100 | 105 | 110
-};
+  theme: "dark",
+  brand: "green",
+  accent: "moss",
+  neutral: "gray",
+  border: "playful",
+  solid: "contrast",
+  solidStyle: "flat",
+  surface: "filled",
+  transition: "all",
+}
 
 const dataStyle = {
   variant: "gradient", // flat | gradient | outline

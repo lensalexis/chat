@@ -63,6 +63,7 @@ export const Header: React.FC = () => {
                 paddingX="l"
                 vertical="center"
               >
+                <ToggleButton label="Case Studies" href="/case-studies" />
                 <ToggleButton label="Pricing" href="/pricing" />
                 <ToggleButton label="About" href="/about" />
                 <ToggleButton label="Blog" href="/blog" />
@@ -83,6 +84,7 @@ export const Header: React.FC = () => {
               overflowY="auto"
               style={{ maxHeight: "calc(100vh - var(--static-space-56))" }}
             >
+                <ToggleButton fillWidth size="l" label="Case Studies" href="/case-studies" />
                 <ToggleButton fillWidth size="l" label="Pricing" href="/pricing" />
                 <ToggleButton fillWidth size="l" label="Blog" href="/blog" />
                 <ToggleButton fillWidth size="l" label="About" href="/about" />

@@ -3,7 +3,45 @@
 import { useChat } from '@ai-sdk/react';
 import { Column, Row, Text, Textarea, IconButton, Heading, Button, useToast } from '@once-ui-system/core';
 import { prompts } from '@/content/misc/prompts';
+import MessageBubble from '@/components/MessageBubble';
 import React, { useRef, useEffect } from 'react';
+
+/* ---------- helpers for cleaner assistant output ---------- */
+function escapeHTML(s: string) {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function cleanMarkdownSymbols(text: string) {
+  return text
+    .replace(/^\s*[*#]+\s?/gm, '')      // strip leading * or # on lines
+    .replace(/\*\*(.*?)\*\*/g, '$1')    // bold -> plain
+    .replace(/\*(.*?)\*/g, '$1');       // italics -> plain
+}
+
+function linkify(text: string) {
+  const url = /(https?:\/\/[^\s)]+)|(\/[a-zA-Z0-9/_-]+(?:\?[^\s)]+)?)/g;
+  return text.replace(url, (match) => {
+    const href =
+      match.startsWith('http') ? match :
+      match.startsWith('/') ? match :
+      '';
+    if (!href) return match;
+    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${match}</a>`;
+  });
+}
+
+function renderAssistantHTML(raw: string) {
+  const safe = escapeHTML(cleanMarkdownSymbols(raw));
+  // convert "- " bullets to •
+  const bullets = safe.replace(/^- /gm, '• ');
+  return linkify(bullets);
+}
+/* --------------------------------------------------------- */
 
 export default function ChatClient(): React.ReactNode {
   const { addToast } = useToast();
@@ -19,14 +57,7 @@ export default function ChatClient(): React.ReactNode {
     stop,
     error,
   } = useChat({
-    // keep your system prompts
-    initialMessages: prompts.system.map((prompt, index) => ({
-      role: "system",
-      id: `system-${index}`,
-      content: prompt,
-    })),
     onError(err) {
-      // surface the actual error reason
       addToast({ message: err.message || 'Chat failed', variant: 'error' });
       console.error('[chat] onError', err);
     },
@@ -56,41 +87,52 @@ export default function ChatClient(): React.ReactNode {
             horizontal="center"
             id="chat-messages-container"
           >
-            <Column fillWidth fitHeight maxWidth="s" gap="24">
+            {/* tighter vertical rhythm and a max width so lines never get too long */}
+            <Column fillWidth fitHeight maxWidth="m" gap="12">
               {messages
                 .filter(m => m.role !== 'system')
-                .map(m => (
-                  <Column key={m.id} paddingTop="2" fillWidth>
-                    <Row
-                      fillWidth
-                      horizontal={m.role === 'user' ? 'end' : 'start'}
-                      gap="8"
-                    >
-                      <Row
-                        data-border="rounded"
-                        style={{ maxWidth: '36rem', wordBreak: 'break-word' }}
-                        fitWidth
-                        paddingX="20"
-                        paddingY="12"
-                        radius="l"
-                        background={m.role === 'user' ? 'neutral-alpha-weak' : 'surface'}
-                      >
-                        <Text>{typeof m.content === 'string'
-                          ? m.content
-                          : Array.isArray(m.content)
-                            ? (m.content as any[]).map(p => typeof p === 'string' ? p : (p.text || '')).join('')
-                            : 'Content unavailable'}
-                        </Text>
-                      </Row>
-                    </Row>
-                  </Column>
-                ))}
+                .map(m => {
+                  const text = typeof m.content === 'string'
+                    ? m.content
+                    : Array.isArray(m.content)
+                      ? (m.content as any[])
+                          .map(p => (typeof p === 'string' ? p : (p.text || '')))
+                          .join('')
+                      : '';
+
+                  const isAssistant = m.role === 'assistant';
+
+                  return (
+                    <MessageBubble key={m.id} role={m.role as 'user' | 'assistant'}>
+                      {isAssistant ? (
+                        <div
+                          style={{ lineHeight: 1.6, whiteSpace: 'pre-wrap' }}
+                          dangerouslySetInnerHTML={{ __html: renderAssistantHTML(text) }}
+                        />
+                      ) : (
+                        <>{text}</>
+                      )}
+                    </MessageBubble>
+                  );
+                })}
+
+              {/* subtle typing indicator that aligns with assistant */}
+              {isLoading && (
+                <MessageBubble role="assistant">
+                  <span style={{ display: 'inline-flex', gap: 6 }}>
+                    <span className="dot" />
+                    <span className="dot" />
+                    <span className="dot" />
+                  </span>
+                </MessageBubble>
+              )}
+
               <div ref={messagesEndRef} style={{ height: 1, opacity: 0 }} />
             </Column>
           </Column>
         ) : (
           <Heading variant="display-default-xs" align="center" marginBottom="48">
-            What are we working on?
+            What do you need done?
           </Heading>
         )}
 
@@ -102,7 +144,7 @@ export default function ChatClient(): React.ReactNode {
                 id="chat-input"
                 lines="auto"
                 value={input}
-                placeholder={isLoading ? 'Generating…' : 'Ask anything'}
+                placeholder={isLoading ? 'Generating…' : 'Ask anything about Websites or Marketing'}
                 onChange={handleInputChange}
                 disabled={isLoading}
                 onKeyDown={(e) => {

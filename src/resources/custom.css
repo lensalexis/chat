@@ -52,3 +52,19 @@
   --scheme-neutral-600-50: rgba(137,152,159,0.5);
   /*
 }*/
+/* typing dots */
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+  animation: dotPulse 1.2s infinite ease-in-out;
+}
+.dot:nth-child(2) { animation-delay: .15s; }
+.dot:nth-child(3) { animation-delay: .3s; }
+
+@keyframes dotPulse {
+  0%, 80%, 100% { transform: scale(.6); opacity: .4; }
+  40% { transform: scale(1); opacity: .9; }
+}

@@ -13,4 +13,6 @@ export * from "./Posts";
 export * from "./PostsClient";
 export * from "./Mdx";
 export * from "./Plan";
-
+export * from "./Background4";
+export { default as Background4 } from "./Background4";
+export * from "./Testimonial1";

@@ -7,12 +7,15 @@ interface PostsClientProps extends React.ComponentProps<typeof Card> {
   posts: any[];
   range?: [number] | [number, number];
   thumbnail?: boolean;
+  /** base path for links, e.g. "/blog" (default) or "/case-studies" */
+  basePath?: string;
 }
 
 export function PostsClient({
   posts,
   range,
   thumbnail = true,
+  basePath = '/blog',        // ← NEW: default stays /blog
   ...card
 }: PostsClientProps) {
   const sortedBlogs = [...posts].sort((a: any, b: any) => {
@@ -33,6 +36,7 @@ export function PostsClient({
           key={post.slug}
           post={post}
           thumbnail={thumbnail}
+          basePath={basePath}      // ← NEW: pass to Post
           {...card}
         />
       ))}
