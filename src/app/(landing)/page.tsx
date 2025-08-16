@@ -2,6 +2,8 @@ import { Hero, Effects, Blog, Brands } from "@/app/(landing)/components";
 import { Column, Row, Meta, Schema } from "@once-ui-system/core";
 import { baseURL, landing } from "@/resources";
 import ChatClient from "../(product)/chat/client";
+import ChatUI from '@/components/ChatUI'; // Adjust path if needed
+
 
 export async function generateMetadata() {
   return Meta.generate({

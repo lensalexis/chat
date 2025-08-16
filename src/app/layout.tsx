@@ -1,13 +1,15 @@
+// src/app/layout.tsx
 import '@once-ui-system/core/css/styles.css';
 import '@once-ui-system/core/css/tokens.css';
-import '@/resources/custom.css'
+import '@/resources/custom.css';
 
-import classNames from "classnames";
-import { getThemeInitScript } from "@/utils";
+import classNames from 'classnames';
+import { getThemeInitScript } from '@/utils';
 
-import { baseURL, landing, fonts, style, dataStyle } from "@/resources";
-import { Meta, Schema,  Column, Flex } from "@once-ui-system/core";
+import { baseURL, landing, fonts, style, dataStyle } from '@/resources';
+import { Meta, Schema, Column, Flex } from '@once-ui-system/core';
 import { Providers } from '@/components';
+import IntercomBoot from '@/components/IntercomBoot';
 
 export async function generateMetadata() {
   return Meta.generate({
@@ -37,7 +39,7 @@ export default function RootLayout({
         fonts.heading.variable,
         fonts.body.variable,
         fonts.label.variable,
-        fonts.code.variable,
+        fonts.code.variable
       )}
     >
       <Schema
@@ -67,7 +69,20 @@ export default function RootLayout({
         />
       </head>
       <Providers>
-        <Column as="body" background="page" fillWidth margin="0" padding="0" style={{ minHeight: "100vh" }}>
+        <Column
+          as="body"
+          background="page"
+          fillWidth
+          margin="0"
+          padding="0"
+          style={{ minHeight: '100vh' }}
+        >
+          {/* Boot Intercom Messenger globally.
+              - Anonymous by default
+              - If you pass userId/email/name via props (e.g., from a user context),
+                it will switch to Secure Mode automatically when /api/intercom/jwt is available. */}
+          <IntercomBoot autoOpen={false} />
+
           <Column fillWidth horizontal="center" flex={1}>
             {children}
           </Column>
